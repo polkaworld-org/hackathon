@@ -19,13 +19,14 @@ export function saveAccount(mnemonic) {
   const account = new Keyring().addFromMnemonic(mnemonic);
   const address = account.address;
 
-  localStorage.setItem(
-    'currentAccount',
-    JSON.stringify({
-      address,
-      mnemonic,
-    })
-  );
+  const save = {
+    address,
+    mnemonic,
+  };
+
+  localStorage.setItem('currentAccount', JSON.stringify(save));
+
+  currentAccount = save;
 }
 
 export function getAccountFromStorage() {

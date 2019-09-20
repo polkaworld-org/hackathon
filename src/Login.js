@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 
 import logo from './imgs/logo.jpg';
 
-import { mnemonicValidate, mnemonicExist, saveAccount } from './Account';
+import { mnemonicValidate, mnemonicExist, saveAccount, getAccount } from './Account';
 
 const useStyles = makeStyles({
   container: {
@@ -41,8 +41,14 @@ const useStyles = makeStyles({
   },
 });
 
-export default function() {
+export default function({ history }) {
   const classes = useStyles();
+  const account = getAccount();
+
+  if (account) {
+    history.push('/');
+    return null;
+  }
 
   const [mnemonic, setMnemonic] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -83,6 +89,7 @@ export default function() {
               setErrorMsg('account not exist');
             } else {
               saveAccount(mnemonic.trim());
+              history.push('/');
             }
           }}
         >
