@@ -1,19 +1,20 @@
 import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router';
+import { ThemeProvider } from '@material-ui/styles';
 
-function App() {
+import theme from './theme';
+import Home from './Home';
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <Router>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Redirect to="/" />
+        </Switch>
+      </Router>
+    </ThemeProvider>
   );
 }
-
-export default App;
