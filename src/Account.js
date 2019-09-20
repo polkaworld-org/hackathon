@@ -1,4 +1,6 @@
 import { Keyring } from '@polkadot/api';
+import { u8aToHex } from '@polkadot/util';
+import './utils';
 import config from './config';
 
 let currentAccount = getAccountFromStorage();
@@ -19,14 +21,15 @@ export function saveAccount(mnemonic) {
   const account = new Keyring().addFromMnemonic(mnemonic);
   const address = account.address;
 
-  const save = {
-    address,
-    mnemonic,
-  };
+  localStorage.setItem(
+    'currentAccount',
+    JSON.stringify({
+      address,
+      mnemonic,
+    })
+  );
 
-  localStorage.setItem('currentAccount', JSON.stringify(save));
-
-  currentAccount = save;
+  currentAccount = config.find(a => a.address === address);
 }
 
 export function getAccountFromStorage() {
@@ -39,13 +42,20 @@ export function getAccountFromStorage() {
   const configAccount = config.find(a => a.address === account.address);
 
   if (configAccount.mnemonic !== account.mnemonic) {
-    localStorage.setItem('currentAccount', '');
+    localStorage.setItem('currentAccount', null);
     return null;
   }
 
-  return account;
+  return configAccount;
 }
 
 export function getAccount() {
   return currentAccount;
+}
+
+export function vote(mnemonic, target, vote) {
+  const account = new Keyring().addFromMnemonic(mnemonic).address;
+  const signature = u8aToHex(account.sign(`${target}:${vote}`));
+  const publicKey = u8aToHex(account.publicKey);
+  console.log(publicKey);
 }
