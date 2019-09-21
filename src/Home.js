@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 
 import { makeStyles } from '@material-ui/styles';
+import { NavLink } from 'react-router-dom';
+
 import Modal from './Modal';
 import { getAccount, vote } from './Account';
 import config from './config';
@@ -87,11 +89,37 @@ const useStyles = makeStyles({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  black: {
+    background: '#111111',
+    color: '#ffffff',
+    '& $cardTitle': {
+      color: '#ffffff',
+    },
+    '& $cardAddress': {
+      color: '#ffffff',
+    },
+    '& $scoreTitle': {
+      color: '#ffffff',
+    },
+    '& $rateTitle': {
+      color: '#ffffff',
+    },
+    '& $rateContent': {
+      color: '#ffffff',
+    },
+    '& $scoreContent': {
+      color: '#ffffff',
+    },
+  },
+  link: {
+    color: 'inherit',
+    textDecoration: 'none',
+  },
 });
 
 export default function({ history }) {
   const classes = useStyles();
-  const [modalOpen, setModalOpen] = useState(true);
+  const [openAddress, setOpenAddress] = useState('');
   const account = getAccount();
 
   if (!account) {
@@ -105,11 +133,19 @@ export default function({ history }) {
     <div>
       <div className={classes.header}>
         <div className={classes.title}>{account.projectName || (account.type === '0' ? 'Admin' : 'Judge')}</div>
-        <div className={classes.rule}>Rule</div>
+        <div className={classes.rule}>
+          <NavLink to="/rule" className={classes.link}>
+            Rule
+          </NavLink>
+        </div>
       </div>
       <div className={classes.main}>
         {projects.map(({ projectName, address }) => (
-          <div className={classes.card} key={address}>
+          <div
+            className={`${classes.card} ${address === openAddress ? classes.black : ''}`}
+            key={address}
+            onClick={() => setOpenAddress(address)}
+          >
             <div className={classes.cardLeft}>
               <div className={classes.cardTitle}>{projectName}</div>
               <div className={classes.cardAddress}>{address}</div>
@@ -129,7 +165,7 @@ export default function({ history }) {
           </div>
         ))}
       </div>
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)}></Modal>
+      <Modal open={!!openAddress} onClose={() => setOpenAddress('')}></Modal>
     </div>
   );
 }

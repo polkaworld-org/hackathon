@@ -6,6 +6,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import theme from './theme';
 import Home from './Home';
 import Login from './Login';
+import Rule from './Rule';
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
       <Router>
         <Switch>
           <Route exact path="/" component={Home} />
+          <Route path="/rule" component={Rule} />
           <Route path="/login" component={Login} />
           <Redirect to="/" />
         </Switch>
