@@ -30,7 +30,8 @@ export function saveAccount(mnemonic) {
 
   currentAccount = {
     ...config.find(a => a.address === address),
-    ...account,
+    address,
+    mnemonic,
   };
 }
 

@@ -134,7 +134,7 @@ export default function({ history }) {
   const [voteData, setVoteData] = useState(null);
   const [voteStatus, setVoteStatus] = useState('0');
   const account = getAccount();
-
+  console.log(account)
   if (!account) {
     history.push('/login');
     return null;
