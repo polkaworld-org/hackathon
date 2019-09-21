@@ -1,6 +1,5 @@
 import { Keyring } from '@polkadot/api';
 import { u8aToHex } from '@polkadot/util';
-import './utils';
 import config from './config';
 
 let currentAccount = getAccountFromStorage();
@@ -53,9 +52,24 @@ export function getAccount() {
   return currentAccount;
 }
 
-export function vote(mnemonic, target, vote) {
-  const account = new Keyring().addFromMnemonic(mnemonic).address;
-  const signature = u8aToHex(account.sign(`${target}:${vote}`));
+export function vote(target, score) {
+  const mnemonic = getAccount().mnemonic;
+  const account = new Keyring().addFromMnemonic(mnemonic);
+  const signature = u8aToHex(account.sign(`${target}:${score}`));
   const publicKey = u8aToHex(account.publicKey);
-  console.log(publicKey);
+
+  return fetch('http://localhost:8081/vote', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      signature,
+      publicKey,
+      target,
+      score,
+    }),
+  }).then(function(response) {
+    return response.json();
+  });
 }

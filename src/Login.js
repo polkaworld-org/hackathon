@@ -45,11 +45,6 @@ export default function({ history }) {
   const classes = useStyles();
   const account = getAccount();
 
-  if (account) {
-    history.push('/');
-    return null;
-  }
-
   const [mnemonic, setMnemonic] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
