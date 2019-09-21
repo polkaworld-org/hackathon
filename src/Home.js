@@ -1,17 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { makeStyles } from '@material-ui/styles';
+import Modal from './Modal';
 import { getAccount, vote } from './Account';
 import config from './config';
 
 const useStyles = makeStyles({
+  main: {
+    position: 'relative',
+    maxWidth: '100%',
+    paddingTop: 45,
+  },
   header: {
+    top: 0,
+    left: 'auto',
+    right: 0,
+    position: 'fixed',
+    width: '100%',
     background: '#f9f9f9',
     textAlign: 'center',
     overflow: 'hidden',
-    position: 'relative',
     padding: 12,
     color: '#030303',
+    zIndex: 1,
   },
   title: {
     fontSize: 18,
@@ -80,7 +91,7 @@ const useStyles = makeStyles({
 
 export default function({ history }) {
   const classes = useStyles();
-
+  const [modalOpen, setModalOpen] = useState(true);
   const account = getAccount();
 
   if (!account) {
@@ -93,12 +104,12 @@ export default function({ history }) {
   return (
     <div>
       <div className={classes.header}>
-        <div className={classes.title}>{account.projectName || account.type === '0' ? 'Admin' : 'Judge'}</div>
+        <div className={classes.title}>{account.projectName || (account.type === '0' ? 'Admin' : 'Judge')}</div>
         <div className={classes.rule}>Rule</div>
       </div>
-      <div>
+      <div className={classes.main}>
         {projects.map(({ projectName, address }) => (
-          <div className={classes.card}>
+          <div className={classes.card} key={address}>
             <div className={classes.cardLeft}>
               <div className={classes.cardTitle}>{projectName}</div>
               <div className={classes.cardAddress}>{address}</div>
@@ -110,12 +121,15 @@ export default function({ history }) {
               </div>
               <div className={classes.rate}>
                 <div className={classes.rateTitle}>My Rated</div>
-                <div className={classes.rateContent}>-</div>
+                <div className={classes.rateContent} style={{ color: '#34C69A' }}>
+                  +5
+                </div>
               </div>
             </div>
           </div>
         ))}
       </div>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)}></Modal>
     </div>
   );
 }

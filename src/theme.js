@@ -43,6 +43,44 @@ const theme = createMuiTheme({
         margin: '8px 14px 0 0',
       },
     },
+    MuiSlider: {
+      track: {
+        height: 3,
+      },
+      thumb: {
+        height: 25,
+        width: 25,
+        backgroundColor: '#fff',
+        boxShadow: '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)',
+        marginTop: -11,
+        marginLeft: -11,
+        '&:focus,&:hover,&$active': {
+          boxShadow: '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.3),0 0 0 1px rgba(0,0,0,0.02)',
+          '@media (hover: none)': {
+            boxShadow: '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)',
+          },
+        },
+      },
+      valueLabel: {
+        left: 'calc(-50% + 10px)',
+        top: -16,
+        color: '#111111',
+        fontSize: 14,
+        '& *': {
+          background: 'transparent',
+          color: '#000',
+        },
+      },
+      active: {},
+      markLabel: {
+        marginTop: 10,
+        fontSize: 12,
+        color: '#8E8E93',
+      },
+      markLabelActive: {
+        color: '#8E8E93',
+      },
+    },
   },
 });
 
