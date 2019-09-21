@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer, useMemo } from 'react';
 
 import { makeStyles } from '@material-ui/styles';
 import { NavLink } from 'react-router-dom';
@@ -187,13 +187,27 @@ export default function({ history }) {
 
         return scoreList;
       });
+
       setVoteData(detail.result);
       setVoteStatus(status.result);
       setLoading(false);
     });
   }, [count]);
 
-  const projects = config.filter(({ type }) => type === '2');
+  const projects = useMemo(() => {
+    if (showDetail && voteData) {
+      return config
+        .filter(({ type }) => type === '2')
+        .slice()
+        .sort((a, b) => {
+          const aa = voteData.find(x => x.target === a.address) || 0;
+          const bb = voteData.find(x => x.target === b.address) || 0;
+          return bb.total - aa.total;
+        });
+    } else {
+      return config.filter(({ type }) => type === '2');
+    }
+  }, [config, voteData, showDetail]);
 
   return (
     <div>
