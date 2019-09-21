@@ -181,7 +181,19 @@ export default function({ history, match }) {
       });
 
       if (detail.result.find(({ target }) => target === id)) {
-        setScoreList(detail.result.find(({ target }) => target === id));
+        const aaa = detail.result.find(({ target }) => target === id);
+        const index = config
+          .filter(({ type }) => type === '2')
+          .slice()
+          .sort((a, b) => {
+            const aa = detail.result.find(x => x.target === a.address) || 0;
+            const bb = detail.result.find(x => x.target === b.address) || 0;
+            return bb.total - aa.total;
+          })
+          .findIndex(({ address }) => address === aaa.target);
+
+        aaa.index = index + 1;
+        setScoreList(aaa);
       }
 
       setVoteData(detail.result);
@@ -205,7 +217,7 @@ export default function({ history, match }) {
       <div className={classes.main}>
         <div className={classes.card}>
           <div className={classes.cardLeft}>
-            <div className={classes.cardTitle}>{account.projectName}</div>
+            <div className={classes.cardTitle}>{config.find(({address}) => address === id).projectName}</div>
             <div className={classes.cardAddress}>{id}</div>
           </div>
           <div className={classes.cardRight}>
@@ -217,7 +229,7 @@ export default function({ history, match }) {
             </div>
             <div className={classes.rate}>
               <div className={classes.rateTitle}>Ranking</div>
-              <div className={`${classes.rateContent}`}>{voteStatus === '0' ? '-' : 'NAN'}</div>
+              <div className={`${classes.rateContent}`}>{scoreList && scoreList.total ? scoreList.index : '-'}</div>
             </div>
           </div>
         </div>

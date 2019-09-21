@@ -30,7 +30,7 @@ export function saveAccount(mnemonic) {
 
   currentAccount = {
     ...config.find(a => a.address === address),
-    mnemonic: account.mnemonic,
+    ...account,
   };
 }
 
@@ -41,11 +41,11 @@ export function getAccountFromStorage() {
 
   const account = JSON.parse(_account);
 
-  if(!account) return null
+  if (!account) return null;
 
   const configAccount = {
     ...config.find(a => a.address === account.address),
-    mnemonic: account.mnemonic,
+    ...account,
   };
 
   return configAccount;
