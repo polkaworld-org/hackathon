@@ -58,7 +58,7 @@ export function vote(target, score) {
   const signature = u8aToHex(account.sign(`${target}:${score}`));
   const publicKey = u8aToHex(account.publicKey);
 
-  return fetch('http://localhost:8081/vote', {
+  return fetch('https://api.polkaworld.org/vote', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

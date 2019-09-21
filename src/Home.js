@@ -122,6 +122,9 @@ const useStyles = makeStyles({
   scoreValue: {
     color: '#34C69A',
   },
+  number: {
+
+  },
 });
 
 export default function({ history }) {
@@ -139,10 +142,14 @@ export default function({ history }) {
     return null;
   }
 
+  const isAdmin = account.type === '0';
+
+  const showDetail = isAdmin || voteStatus === '1'
+
   useEffect(() => {
     Promise.all([
-      fetch('http://localhost:8081/detail').then(r => r.json()),
-      fetch('http://localhost:8081/status').then(r => r.json()),
+      fetch('https://api.polkaworld.org/detail').then(r => r.json()),
+      fetch('https://api.polkaworld.org/status').then(r => r.json()),
     ]).then(([detail, status]) => {
       setVoteData(detail.result);
       setVoteStatus(status.result);
@@ -178,14 +185,16 @@ export default function({ history }) {
             }
           }
 
-          const canVote = !isSelf && score === '-';
+          const canVote = !isSelf && score === '-' && !showDetail;
 
           return (
             <div
               className={`${classes.card} ${canVote ? (address === openAddress ? classes.black : '') : classes.grey}`}
               key={address}
               onClick={() => {
-                if (canVote) setOpenAddress(address);
+                if (showDetail) {
+                  history.push(`/detail/${address}`);
+                } else if (canVote) setOpenAddress(address);
               }}
             >
               <div className={classes.cardLeft}>
@@ -197,10 +206,17 @@ export default function({ history }) {
                   <div className={classes.scoreTitle}>Score</div>
                   <div className={classes.scoreContent}>{loading ? '-' : voteStatus ? '-' : '1'}</div>
                 </div>
-                <div className={classes.rate}>
-                  <div className={classes.rateTitle}>My Rated</div>
-                  <div className={`${classes.rateContent} ${score !== '-' ? classes.scoreValue : ''}`}>{score}</div>
-                </div>
+                {showDetail ? (
+                  <div className={classes.rate}>
+                    <div className={classes.rateTitle}>Number</div>
+                    <div className={`${classes.scoreContent}`}>-</div>
+                  </div>
+                ) : (
+                  <div className={classes.rate}>
+                    <div className={classes.rateTitle}>My Rated</div>
+                    <div className={`${classes.rateContent} ${score !== '-' ? classes.scoreValue : ''}`}>{score}</div>
+                  </div>
+                )}
               </div>
             </div>
           );
