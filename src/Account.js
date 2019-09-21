@@ -28,7 +28,10 @@ export function saveAccount(mnemonic) {
     })
   );
 
-  currentAccount = config.find(a => a.address === address);
+  currentAccount = {
+    ...config.find(a => a.address === address),
+    mnemonic: account.mnemonic,
+  };
 }
 
 export function getAccountFromStorage() {
@@ -38,12 +41,12 @@ export function getAccountFromStorage() {
 
   const account = JSON.parse(_account);
 
-  const configAccount = config.find(a => a.address === account.address);
+  if(!account) return null
 
-  if (configAccount.mnemonic !== account.mnemonic) {
-    localStorage.setItem('currentAccount', null);
-    return null;
-  }
+  const configAccount = {
+    ...config.find(a => a.address === account.address),
+    mnemonic: account.mnemonic,
+  };
 
   return configAccount;
 }
