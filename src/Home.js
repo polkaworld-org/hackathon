@@ -220,7 +220,7 @@ export default function({ history }) {
         </div>
       </div>
       <div className={classes.main}>
-        {projects.map(({ projectName, address }) => {
+        {voteData && projects.map(({ projectName, address }) => {
           const isSelf = address === account.address;
 
           let score = '-';
