@@ -160,30 +160,19 @@ export default function({ history }) {
         });
 
         let total = {
-          judgeNo: 0,
-          judge: 0,
-          project: 0,
-          projectNo: 0,
+          judge: 130,
+          project: 240,
         };
 
         for (const i of scoreList.detail) {
           if (i.type === '1') {
-            total.judge += i.score;
-            total.judgeNo += 1;
+            total.judge -= 10 - i.score;
           } else if (i.type === '2') {
-            total.project += i.score;
-            total.projectNo += 1;
+            total.project -= 10 - i.score;
           }
         }
-        if (!total.judgeNo && !total.projectNo) {
-          scoreList.total = 0;
-        } else if (!total.judgeNo) {
-          scoreList.total = (total.project / (total.projectNo * 10));
-        } else if (!total.projectNo) {
-          scoreList.total = (total.judge / (total.judgeNo * 10));
-        } else {
-          scoreList.total = (total.judge / (total.judgeNo * 10)) * 0.7 + (total.project / (total.projectNo * 10)) * 0.3;
-        }
+
+        scoreList.total = (total.judge / 130) * 0.7 + (total.project / 240) * 0.3;
 
         return scoreList;
       });

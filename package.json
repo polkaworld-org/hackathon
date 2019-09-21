@@ -9,10 +9,12 @@
     "@polkadot/api": "^0.92.1",
     "@polkadot/util": "^1.4.1",
     "@polkadot/util-crypto": "^1.4.1",
+    "bip39": "^3.0.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-router-dom": "^5.0.1",
-    "react-scripts": "3.1.2"
+    "react-scripts": "3.1.2",
+    "tweetnacl": "^1.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
