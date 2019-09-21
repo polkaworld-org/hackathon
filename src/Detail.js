@@ -170,9 +170,9 @@ export default function({ history, match }) {
         if (!total.judgeNo && !total.projectNo) {
           scoreList.total = 0;
         } else if (!total.judgeNo) {
-          scoreList.total = (total.project / (total.projectNo * 10)) * 0.3;
+          scoreList.total = (total.project / (total.projectNo * 10)) ;
         } else if (!total.projectNo) {
-          scoreList.total = (total.judge / (total.judgeNo * 10)) * 0.7;
+          scoreList.total = (total.judge / (total.judgeNo * 10)) ;
         } else {
           scoreList.total = (total.judge / (total.judgeNo * 10)) * 0.7 + (total.project / (total.projectNo * 10)) * 0.3;
         }
