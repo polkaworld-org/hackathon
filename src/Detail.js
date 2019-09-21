@@ -134,17 +134,61 @@ export default function({ history, match }) {
   const [loading, setLoading] = useState(true);
   const [voteData, setVoteData] = useState(null);
   const [voteStatus, setVoteStatus] = useState('0');
+  const [scoreList, setScoreList] = useState(null);
 
   useEffect(() => {
     Promise.all([
       fetch('https://api.polkaworld.org/detail').then(r => r.json()),
       fetch('https://api.polkaworld.org/status').then(r => r.json()),
     ]).then(([detail, status]) => {
+      detail.result.map(scoreList => {
+        scoreList.detail = Object.keys(scoreList.result).map(voteAddress => {
+          const voteAccount = config.find(({ address }) => address === voteAddress);
+          const score = scoreList.result[voteAddress];
+          return {
+            score,
+            ...voteAccount,
+          };
+        });
+
+        let total = {
+          judgeNo: 0,
+          judge: 0,
+          project: 0,
+          projectNo: 0,
+        };
+
+        for (const i of scoreList.detail) {
+          if (i.type === '1') {
+            total.judge += i.score;
+            total.judgeNo += 1;
+          } else if (i.type === '2') {
+            total.project += i.score;
+            total.projectNo += 1;
+          }
+        }
+        if (!total.judgeNo && !total.projectNo) {
+          scoreList.total = 0;
+        } else if (!total.judgeNo) {
+          scoreList.total = (total.project / (total.projectNo * 10)) * 0.3;
+        } else if (!total.projectNo) {
+          scoreList.total = (total.judge / (total.judgeNo * 10)) * 0.7;
+        } else {
+          scoreList.total = (total.judge / (total.judgeNo * 10)) * 0.7 + (total.project / (total.projectNo * 10)) * 0.3;
+        }
+
+        return scoreList;
+      });
+
+      if (detail.result.find(({ target }) => target === id)) {
+        setScoreList(detail.result.find(({ target }) => target === id));
+      }
+
       setVoteData(detail.result);
       setVoteStatus(status.result);
       setLoading(false);
     });
-  }, []);
+  }, [id]);
 
   return (
     <div className={classes.container}>
@@ -167,7 +211,9 @@ export default function({ history, match }) {
           <div className={classes.cardRight}>
             <div className={classes.score}>
               <div className={classes.scoreTitle}>Score</div>
-              <div className={classes.scoreContent}>{voteStatus === '0' ? '-' : 'NAN'}</div>
+              <div className={classes.scoreContent}>
+                {scoreList && scoreList.total ? Math.floor(scoreList.total * 100) : '-'}
+              </div>
             </div>
             <div className={classes.rate}>
               <div className={classes.rateTitle}>Ranking</div>
@@ -176,41 +222,19 @@ export default function({ history, match }) {
           </div>
         </div>
         {!loading &&
-          config
-            .filter(({ type }) => type === '1')
-            .map(({ address }) => {
-              const scoreList = voteData.find(({ target }) => target === id);
-              const score = scoreList && scoreList.result[address];
-
-              return (
-                <div className={classes.item} key={address}>
-                  <div className={classes.address}>{address}</div>
-                  {score ? (
-                    <div className={classes.itemscore}>+{score}</div>
-                  ) : (
-                    <div className={classes.itemscorenull}>-</div>
-                  )}
-                </div>
-              );
-            })}
-        {!loading &&
-          config
-            .filter(({ type }) => type === '2')
-            .map(({ projectName, address }) => {
-              const scoreList = voteData.find(({ target }) => target === id);
-              const score = scoreList && scoreList.result[address];
-
-              return (
-                <div className={classes.item} key={address}>
-                  <div className={classes.address}>{projectName}</div>
-                  {score ? (
-                    <div className={classes.itemscore}>+{score}</div>
-                  ) : (
-                    <div className={classes.itemscorenull}>-</div>
-                  )}
-                </div>
-              );
-            })}
+          scoreList &&
+          scoreList.detail.map(({ score, address, projectName }) => {
+            return (
+              <div className={classes.item} key={address}>
+                <div className={classes.address}>{projectName || address}</div>
+                {score ? (
+                  <div className={classes.itemscore}>+{score}</div>
+                ) : (
+                  <div className={classes.itemscorenull}>-</div>
+                )}
+              </div>
+            );
+          })}
       </div>
     </div>
   );

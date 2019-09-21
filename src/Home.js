@@ -122,9 +122,7 @@ const useStyles = makeStyles({
   scoreValue: {
     color: '#34C69A',
   },
-  number: {
-
-  },
+  number: {},
 });
 
 export default function({ history }) {
@@ -144,13 +142,51 @@ export default function({ history }) {
 
   const isAdmin = account.type === '0';
 
-  const showDetail = isAdmin || voteStatus === '1'
+  const showDetail = isAdmin || voteStatus === '1';
 
   useEffect(() => {
     Promise.all([
       fetch('https://api.polkaworld.org/detail').then(r => r.json()),
       fetch('https://api.polkaworld.org/status').then(r => r.json()),
     ]).then(([detail, status]) => {
+      detail.result.map(scoreList => {
+        scoreList.detail = Object.keys(scoreList.result).map(voteAddress => {
+          const voteAccount = config.find(({ address }) => address === voteAddress);
+          const score = scoreList.result[voteAddress];
+          return {
+            score,
+            ...voteAccount,
+          };
+        });
+
+        let total = {
+          judgeNo: 0,
+          judge: 0,
+          project: 0,
+          projectNo: 0,
+        };
+
+        for (const i of scoreList.detail) {
+          if (i.type === '1') {
+            total.judge += i.score;
+            total.judgeNo += 1;
+          } else if (i.type === '2') {
+            total.project += i.score;
+            total.projectNo += 1;
+          }
+        }
+        if (!total.judgeNo && !total.projectNo) {
+          scoreList.total = 0;
+        } else if (!total.judgeNo) {
+          scoreList.total = (total.project / (total.projectNo * 10)) * 0.3;
+        } else if (!total.projectNo) {
+          scoreList.total = (total.judge / (total.judgeNo * 10)) * 0.7;
+        } else {
+          scoreList.total = (total.judge / (total.judgeNo * 10)) * 0.7 + (total.project / (total.projectNo * 10)) * 0.3;
+        }
+
+        return scoreList;
+      });
       setVoteData(detail.result);
       setVoteStatus(status.result);
       setLoading(false);
@@ -204,12 +240,24 @@ export default function({ history }) {
               <div className={classes.cardRight}>
                 <div className={classes.score}>
                   <div className={classes.scoreTitle}>Score</div>
-                  <div className={classes.scoreContent}>{loading ? '-' : voteStatus ? '-' : '1'}</div>
+                  <div className={classes.scoreContent}>
+                    {loading || !showDetail
+                      ? '-'
+                      : voteData
+                      ? voteData.find(x => x.target === address) &&
+                        Math.floor(voteData.find(x => x.target === address).total * 100)
+                      : '-'}
+                  </div>
                 </div>
                 {showDetail ? (
                   <div className={classes.rate}>
                     <div className={classes.rateTitle}>Number</div>
-                    <div className={`${classes.scoreContent}`}>-</div>
+                    <div className={`${classes.scoreContent}`}>
+                      {voteData
+                        ? voteData.find(x => x.target === address) &&
+                          voteData.find(x => x.target === address).detail.length
+                        : '-'}
+                    </div>
                   </div>
                 ) : (
                   <div className={classes.rate}>

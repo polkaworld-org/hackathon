@@ -75,8 +75,7 @@ export default function({ history }) {
           <div>
             <p>打分规则： </p>
             <p>
-              1. 在每个队开始展示时就可以对其进行打分，可以选择 1-10 分，如果你放弃为某个队投票，则默认你给该队伍评了 10
-              分；
+              1. 在每个队开始展示时就可以对其进行打分，可以选择 1-10 分，如果你放弃为某个队投票，则默认你给该队伍评了 0 分；
             </p>
             <p>2.每个评委/团队只能给每个队评分一次，一旦提交评分不可修改；</p>
             <p>3. 每个队的总得分 = 70% 评委评分 + 30% 团队互评评分；</p>
@@ -93,7 +92,7 @@ export default function({ history }) {
             <p>Rating rules: </p>
             <p>
               1. Choose from 1-10 to rate each team during or after its presentation, if you didn’t rate certain team,
-              then your score would be set as default value which is 10 points.
+              then your score would be set as default value which is 0 points.
             </p>
             <p>2. Each judge/team can only rate a team for one time, and cannot edit the score once submit； </p>
             <p> 3. Final score = 70% Judges score + 30% team peer rating score; </p>
