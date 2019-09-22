@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 
 import Modal from './Modal';
 
-import { getAccount } from './Account';
+import { getAccount, setStatus } from './Account';
 import config from './config';
 
 const useStyles = makeStyles({
@@ -34,6 +34,12 @@ const useStyles = makeStyles({
   rule: {
     position: 'absolute',
     right: 16,
+    top: 12,
+    fontSize: 18,
+  },
+  admin: {
+    position: 'absolute',
+    left: 16,
     top: 12,
     fontSize: 18,
   },
@@ -134,7 +140,7 @@ export default function({ history }) {
   const [voteData, setVoteData] = useState(null);
   const [voteStatus, setVoteStatus] = useState('0');
   const account = getAccount();
-  console.log(account)
+
   if (!account) {
     history.push('/login');
     return null;
@@ -201,6 +207,20 @@ export default function({ history }) {
   return (
     <div>
       <div className={classes.header}>
+        {isAdmin && (
+          <div className={classes.admin}>
+            <div
+              onClick={() => {
+                setStatus(voteStatus === '0' ? true : false).then(() => {
+                  forceUpdate();
+                });
+              }}
+              className={classes.link}
+            >
+              {voteStatus === '0' ? '关闭投票' : '开启投票'}
+            </div>
+          </div>
+        )}
         <div className={classes.title}>{account.projectName || (account.type === '0' ? 'Admin' : 'Judge')}</div>
         <div className={classes.rule}>
           <NavLink to="/rule" className={classes.link}>
@@ -209,69 +229,70 @@ export default function({ history }) {
         </div>
       </div>
       <div className={classes.main}>
-        {voteData && projects.map(({ projectName, address }) => {
-          const isSelf = address === account.address;
+        {voteData &&
+          projects.map(({ projectName, address }) => {
+            const isSelf = address === account.address;
 
-          let score = '-';
-          if (isSelf || loading) {
-            score = '-';
-          } else {
-            const findResult = voteData.find(x => x.target === address);
-            if (findResult && findResult.result[account.address]) {
-              score = `+${findResult.result[account.address]}`;
-            } else {
+            let score = '-';
+            if (isSelf || loading) {
               score = '-';
+            } else {
+              const findResult = voteData.find(x => x.target === address);
+              if (findResult && findResult.result[account.address]) {
+                score = `+${findResult.result[account.address]}`;
+              } else {
+                score = '-';
+              }
             }
-          }
 
-          const canVote = !isSelf && score === '-' && !showDetail;
+            const canVote = !isSelf && score === '-' && !showDetail;
 
-          return (
-            <div
-              className={`${classes.card} ${canVote ? (address === openAddress ? classes.black : '') : classes.grey}`}
-              key={address}
-              onClick={() => {
-                if (showDetail) {
-                  history.push(`/detail/${address}`);
-                } else if (canVote) setOpenAddress(address);
-              }}
-            >
-              <div className={classes.cardLeft}>
-                <div className={classes.cardTitle}>{projectName}</div>
-                <div className={classes.cardAddress}>{address}</div>
-              </div>
-              <div className={classes.cardRight}>
-                <div className={classes.score}>
-                  <div className={classes.scoreTitle}>Score</div>
-                  <div className={classes.scoreContent}>
-                    {loading || !showDetail
-                      ? '-'
-                      : voteData
-                      ? voteData.find(x => x.target === address) &&
-                        Math.floor(voteData.find(x => x.target === address).total * 100)
-                      : '-'}
-                  </div>
+            return (
+              <div
+                className={`${classes.card} ${canVote ? (address === openAddress ? classes.black : '') : classes.grey}`}
+                key={address}
+                onClick={() => {
+                  if (showDetail) {
+                    history.push(`/detail/${address}`);
+                  } else if (canVote) setOpenAddress(address);
+                }}
+              >
+                <div className={classes.cardLeft}>
+                  <div className={classes.cardTitle}>{projectName}</div>
+                  <div className={classes.cardAddress}>{address}</div>
                 </div>
-                {showDetail ? (
-                  <div className={classes.rate}>
-                    <div className={classes.rateTitle}>Number</div>
-                    <div className={`${classes.scoreContent}`}>
-                      {voteData
+                <div className={classes.cardRight}>
+                  <div className={classes.score}>
+                    <div className={classes.scoreTitle}>Score</div>
+                    <div className={classes.scoreContent}>
+                      {loading || !showDetail
+                        ? '-'
+                        : voteData
                         ? voteData.find(x => x.target === address) &&
-                          voteData.find(x => x.target === address).detail.length
+                          Math.floor(voteData.find(x => x.target === address).total * 100)
                         : '-'}
                     </div>
                   </div>
-                ) : (
-                  <div className={classes.rate}>
-                    <div className={classes.rateTitle}>My Rated</div>
-                    <div className={`${classes.rateContent} ${score !== '-' ? classes.scoreValue : ''}`}>{score}</div>
-                  </div>
-                )}
+                  {showDetail ? (
+                    <div className={classes.rate}>
+                      <div className={classes.rateTitle}>Number</div>
+                      <div className={`${classes.scoreContent}`}>
+                        {voteData
+                          ? voteData.find(x => x.target === address) &&
+                            voteData.find(x => x.target === address).detail.length
+                          : '-'}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className={classes.rate}>
+                      <div className={classes.rateTitle}>My Rated</div>
+                      <div className={`${classes.rateContent} ${score !== '-' ? classes.scoreValue : ''}`}>{score}</div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
       <Modal target={openAddress} onClose={() => setOpenAddress('')} callBack={forceUpdate} />
     </div>

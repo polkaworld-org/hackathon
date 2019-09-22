@@ -77,3 +77,17 @@ export function vote(target, score) {
     return response.json();
   });
 }
+
+export function setStatus(close) {
+  return fetch('https://api.polkaworld.org/setstatus', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      status: close ? '1' : '0',
+    }),
+  }).then(function(response) {
+    return response.json();
+  });
+}
