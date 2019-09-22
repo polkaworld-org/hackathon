@@ -269,11 +269,11 @@ export default function({ history }) {
                         ? '-'
                         : voteData
                         ? voteData.find(x => x.target === address) &&
-                          Math.floor(voteData.find(x => x.target === address).total * 100)
+                          (voteData.find(x => x.target === address).total * 100).toFixed(2)
                         : '-'}
                     </div>
                   </div>
-                  {showDetail ? (
+                  {isAdmin ? (
                     <div className={classes.rate}>
                       <div className={classes.rateTitle}>Number</div>
                       <div className={`${classes.scoreContent}`}>

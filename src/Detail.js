@@ -213,7 +213,7 @@ export default function({ history, match }) {
             <div className={classes.score}>
               <div className={classes.scoreTitle}>Score</div>
               <div className={classes.scoreContent}>
-                {scoreList && scoreList.total ? Math.floor(scoreList.total * 100) : '-'}
+                {scoreList && scoreList.total ? (scoreList.total * 100).toFixed(2) : '-'}
               </div>
             </div>
             <div className={classes.rate}>
