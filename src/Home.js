@@ -167,7 +167,7 @@ export default function({ history }) {
 
         let total = {
           judge: 130,
-          project: 240,
+          project: 210,
         };
 
         for (const i of scoreList.detail) {
@@ -178,7 +178,7 @@ export default function({ history }) {
           }
         }
 
-        scoreList.total = (total.judge / 130) * 0.7 + (total.project / 240) * 0.3;
+        scoreList.total = (total.judge / 130) * 0.7 + (total.project / 210) * 0.3;
 
         return scoreList;
       });
